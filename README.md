@@ -51,6 +51,6 @@ Isso abrirá o aplicativo no seu navegador padrão, geralmente em http://localho
 
 No navegados, você poderá:
 
-  Carregar seus próprios conjuntos de dados (arquivos CSV, por exemplo).
+ - Carregar seus próprios conjuntos de dados (arquivos CSV, por exemplo).
 
-  Realizar testes estatísticos: Teste de Qui-quadrado e Coeficiente de Correlação de Pearson.
+ - Realizar testes estatísticos: Teste de Qui-quadrado e Coeficiente de Correlação de Pearson.
