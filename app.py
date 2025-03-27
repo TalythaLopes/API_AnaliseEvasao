@@ -78,6 +78,46 @@ if uploaded_file is not None:
             st.write("### Dados após remoção de outliers")
             st.dataframe(df_sem_outliers)
         
+        # Criar coluna com o total de alunos em cada linha
+        df_sem_outliers["QTD_ALUNOS"] = df_sem_outliers[["QTDE SEXO MASCULINO", "QTDE SEXO FEMININO", "QTDE SEXO NÃO INFORMADO"]].sum(axis=1)
+
+        # Agrupar quantidade de alunos que ingressaram por ano (somando todas as colunas de gênero)
+        dfIngressantes = df_sem_outliers.groupby("ANO_INGRESSO", as_index=False)["QTD_ALUNOS"].sum()
+
+        # Exibir tabela com a quantidade de ingressantes por ano antes da seleção
+        st.write("### Quantidade de alunos ingressantes por ano (dados completos):")
+        st.dataframe(dfIngressantes)
+
+        # Criar um filtro para selecionar um intervalo de anos
+        min_ano, max_ano = int(dfIngressantes["ANO_INGRESSO"].min()), int(dfIngressantes["ANO_INGRESSO"].max())
+        anos_selecionados = st.slider(
+            "Selecione o intervalo de anos de ingresso:",
+            min_ano, max_ano, (min_ano, max_ano)
+        )
+        
+        # Exibir tabela filtrada com a quantidade de ingressantes por ano
+        st.write("### Dados filtrados de ingressantes por ano:")
+        st.dataframe(df_sem_outliers)
+
+        # Filtrar os dados com base no intervalo selecionado
+        df_sem_outliers = df_sem_outliers[
+            (df_sem_outliers["ANO_INGRESSO"] >= anos_selecionados[0]) & 
+            (df_sem_outliers["ANO_INGRESSO"] <= anos_selecionados[1])
+        ]
+        
+        # Exibir tabela filtrada com a quantidade de ingressantes por ano
+        st.write("### Dados filtrados de ingressantes por ano:")
+        st.dataframe(df_sem_outliers)
+
+        # Criar gráfico de barras para visualizar os ingressantes por ano
+        #plt.figure(figsize=(10, 5))
+        #sns.barplot(data=df_sem_outliers, x="ANO_INGRESSO", y="QTD_ALUNOS", palette="Blues_r")
+        #plt.xlabel("Ano de Ingresso")
+        #plt.ylabel("Quantidade de Alunos")
+        #plt.title("Ingressantes por Ano")
+        #plt.xticks(rotation=45)
+        #st.pyplot(plt)
+        
         # Em caso de necessidade, tire a # para exibir o tamanho do DataFrame antes e depois da filtragem para analisar se os outliers foram removidos            
         #st.write(f"Antes da remoção dos outliers: {len(df)} linhas")
         #st.write(f"Depois da remoção dos outliers: {len(df_sem_outliers)} linhas")
@@ -193,32 +233,6 @@ if uploaded_file is not None:
         # Interpretação do p-valor
         if p_valor < 0.05:
             st.write("🔴 Existe uma relação estatisticamente significativa entre gênero e evasão.")
-         
-            # Calcula as proporções de evasão e formação por gênero em relação ao total de cada gênero
-            freq_masculino_evasao = tabela_contingencia_suavizada.loc["Masculino", "Evasão"]
-            freq_masculino_formacao = tabela_contingencia_suavizada.loc["Masculino", "Formação"]
-            total_masculino = freq_masculino_evasao + freq_masculino_formacao
-            
-            freq_feminino_evasao = tabela_contingencia_suavizada.loc["Feminino", "Evasão"]
-            freq_feminino_formacao = tabela_contingencia_suavizada.loc["Feminino", "Formação"]
-            total_feminino = freq_feminino_evasao + freq_feminino_formacao
-            
-            proporcao_masculino_evasao = freq_masculino_evasao / total_masculino
-            proporcao_masculino_formacao = freq_masculino_formacao / total_masculino
-            
-            proporcao_feminino_evasao = freq_feminino_evasao / total_feminino
-            proporcao_feminino_formacao = freq_feminino_formacao / total_feminino
-            
-            # Exibição das proporções
-            st.write("### Proporções de Evasão e Formação por Gênero:")
-            st.write(f"**Masculino:**")
-            st.write(f"  - Proporção de Evasão: {proporcao_masculino_evasao:.2f}")
-            st.write(f"  - Proporção de Formação: {proporcao_masculino_formacao:.2f}")
-            
-            st.write(f"**Feminino:**")
-            st.write(f"  - Proporção de Evasão: {proporcao_feminino_evasao:.2f}")
-            st.write(f"  - Proporção de Formação: {proporcao_feminino_formacao:.2f}")
-        
         else:
             st.write("🟢 Não há evidências estatísticas suficientes para afirmar que gênero influencia a evasão.")
 
@@ -276,3 +290,4 @@ if uploaded_file is not None:
 
     except Exception as e:
         st.error(f"Erro ao carregar o arquivo: {e}")
+
