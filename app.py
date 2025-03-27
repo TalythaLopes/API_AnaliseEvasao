@@ -94,10 +94,6 @@ if uploaded_file is not None:
             "Selecione o intervalo de anos de ingresso:",
             min_ano, max_ano, (min_ano, max_ano)
         )
-        
-        # Exibir tabela filtrada com a quantidade de ingressantes por ano
-        st.write("### Dados filtrados de ingressantes por ano:")
-        st.dataframe(df_sem_outliers)
 
         # Filtrar os dados com base no intervalo selecionado
         df_sem_outliers = df_sem_outliers[
@@ -290,4 +286,3 @@ if uploaded_file is not None:
 
     except Exception as e:
         st.error(f"Erro ao carregar o arquivo: {e}")
-
